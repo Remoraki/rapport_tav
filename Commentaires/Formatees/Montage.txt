@@ -1,0 +1,25 @@
+<size=2><b><align="center">Sommaire</size></b></align>
+<size=1>
+-Introduction
+-Photomontage
+-Décoloration
+
+/next<size=1><b><align="center">Introduction</size></b></align>
+<size=0.5>
+Dans cette salle, on voit comment réaliser un photomontage, c'est à dire coller insérer une image source dans une autre image cible qui n'a rien à voir en gardant un maximum de cohérence.
+L'idée principale consiste à "recoller" les gradients ensemble. En somme, à l'intérieur de la zone d'insertion, on définit un champ de gradient g qui correspond à notre objectif.
+On impose à notre solution de coller au gradient de l'image cible sur les bords de la zone d'insertion, ce qui garantira un minimum de cohérence visuelle.
+Il ne reste plus qu'à résoudre un problème aux moindres carrées par rapport à notre champ de gradient g pour déterminer une solution éventuelle.
+
+/next<size=1><b><align="center">Photomontage</size></b></align>
+<size=0.5>
+Dans un premier temps, on prend une approche simple, et on pose simplement g égal au gradient de l'image source elle même. 
+Cette méthode donne des résultats relativements satisfaisants dans la mesure où les images ne sont pas trop éloignées de base.
+Pour assurer plus de cohérence visuelle, on propose un deuxième choix de g, qui consiste à mélanger les gradients de l'image source et de l'image cible.
+En tout point, on conserve le gradient de l'image cible si ses deux composantes sont plus grandes que celui de l'image source, sinon on garde le gradient source.
+Avec méthode, on obtient un aspect un peu plus fantômatique qui permet de mieux recoller la connexion entre les deux images et de garder des éléments de l'image cible dans la zone d'insertion.
+
+/next<size=1><b><align="center">Décoloration</size></b></align>
+<size=0.5>
+Enfin, on peut appliquer grâce à cette technique une décoloration de l'image. En effet il suffit d'insérer une partie de l'image en couleur exactement au même endroit dans l'image en noir et blanc.
+La résolution du problème recollera les couleurs pour une transition fine et presque inperceptible.

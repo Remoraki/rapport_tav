@@ -1,0 +1,49 @@
+SOMMAIRE 
+
+-Introduction
+-Débruitage
+-Inpainting
+-Réalitée diminuée
+-Résultats
+
+INTRODUCTION
+
+Dans cette salle, nous nous attardons sur la retouche d'images. Que ce soit pour restaurer une image endommagée, débruiter une image, ou encore l'altérer directement, les applications sont multiples.
+Cette fois-ci, nous utiliserons les méthodes variationnelles pour résoudre quasiment tous les problèmes présentés.
+Vous trouverez des exemples d'applications sur diverses images sur les autres murs.
+
+DEBRUITAGE
+
+On cherche ici à retirer un maximum le bruit présent sur une image. On fait donc l'hypothèse suivante : le bruit est décrit par les pics de fort gradient.
+On utilise donc une qui pénalise les forts gradients, qui couplée à un terme d'attache aux données, nous donne notre modèle variationnel.
+Cette approche est illustrée par les images du caméraman et de Léna.
+
+INPAINTING
+
+Une technique un peu plus avancée consiste à réaliser la même approche mais sur des domaines définis au préalable. 
+Par exemple, sur l'image de la fleur, on constate nettement que les "dommages" sur l'image sont très localisés et précis.
+L'idée est donc la suivante : On détermine un domaine à restaurer, sur ce domaine, on applique le modèle variationnel précédent, et en dehors du domain on conserve l'image d'origine.
+Le problème posé par cette technique est justement la définition du domain à restaurer. Il est nécéssaire d'appliquer d'autres méthodes avant pour le définir.
+Par exemple, sur l'image du crapeau, on caractérise le domaine grâce à un seuillage sur la couleur jaune.
+On voit que cette technique est extrêmement efficace lorsque le domaine à restaurer est de faible épaisseur.
+En revanche, comme illustré par l'image du randonneur, dès que le domaine est plus compact et épais, cette approche perd de son intérêt, car elle ne conserve pas la texture.
+
+REALITEE DIMINUEE
+
+Dans l'optique d'enlever une partie de l'image tout en préservant un semblant de texture, il faut revoir entièrement notre approche. 
+On fait l'hypothèse que la texture varie localement, et de ça en découle le principe de notre algorithme, à savoir que des zones proches possèdent des texture semblables.
+En pratique on va donc partir d'un point de référence de la frontière de notre domaine à enlever. On va ensuite chercher un autre point proche pour lequel la texture est semblable.
+Cette différence s'évalue simplement à la somme des différences de couleurs pixel par pixel. Puis, nous allons recopier la texture de point semblable à l'intérieur du domaine.
+Cette étape est répétée jusqu'à ce que tout l'intérieur du domaine ait été rempli.
+
+Cet algorithme pose de nombreuses difficultés notemment dans la gestion des ensembles de voisinage. En effet, pour qu'un pixel soit éligible à une itération donnée, il faut que :
+-Son voisinage n'intersecte pas le domaine à restaurer
+-Son voisinage est entièrement contenu dans l'image
+De plus, les comparaison pour la texture s'effectue uniquement sur la partie du voisinage du point de référence en dehors du domaine, et de même la recopie de la texture s'effectue sur la partie à l'intérieur.
+Deux exemples d'utilisation de cet algorithme sont fournis, sur l'image des randonneurs et des pommes.
+
+RESULTATS
+
+Cet algorithme s'avère être plutôt satisfaisant lorsqu'il s'agit d'image dont la texture est très chargée et répétitive, ce qui donne un résultat acceptable dans la forêt, ou sur de l'herbe ou de l'eau par exemple.
+En revanche, et on le voit bien sur l'image des pommes, il n'a aucun intérêt en l'état sur une zone dont la texture est très homogène et où des formes sont très clairement définies.
+Une approche envisageable pour corriger cela pourrait être de mélanger les textures et de les lisser. Une autre idée serait de ne pas enlever l'image mais de la remplacer par autre chose(voir le photomontage).

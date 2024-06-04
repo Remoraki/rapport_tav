@@ -1,0 +1,57 @@
+<size=2><b><align="center">Sommaire</size></b></align>
+<size=1>
+-Introduction
+-Transformations 
+-Compression simple
+-Compression avancée
+
+/next
+<size=1><b><align="center">Introduction</size></b></align>
+<size=0.5>
+Dans cette salle, nous nous intéressons à la manipulation d'un signal sonore dans l'optique d'y appliquer de diverses transformations.
+Qu'il compose une musique, un enregistrement vocal, un cri d'animal, un effet sonore ou une élocution présidentielle, tout se traite sous la forme d'un signal sonore.
+Nous manipulerons le signal dans le domaine fréquentiel, grâce à sa transformée de Fourier à court terme, qui est simplement la transformée de Fourier calculée sur des crénaux temporels locaux plutôt que sur l'entièreté du signal.
+Pour chaque type de manipulation, des illustration se trouvent parmi les différents exemples sur le mur juste à droite. A gauche se trouve le signal d'origine et à droite le signal modifié.
+
+
+/next
+<size=1><b><align="center">Transformations</size></b></align>
+<size=0.5>
+Les premières transformations que l'on peut implémenter sont : coupure de certaines de fréquences, pour créer par exemple des passe-hauts ou et des passe-bas. 
+On peut également accélérer le son en accélérant la lecture du fichier. Ce faisant, on modifie à la fois temporellement ET fréquentiellement l'information sonore.
+Si on souhaite seulement que le fichier soit lu plus vite, il est nécéssaire de réaliser cet étirement sur le sonogramme dans le domaine fréquentiel, avant de repasser dans le domaine temporel pour lire le fichier.
+Avec cette méthode, il est important de penser à remettre correctement les phases qui sont modifiées.
+Si on souhaite seulement que la hauteur du son soit modifiée, on peut on procède d'abord à étirer ou comprimer le sonogramme, puis on lit le fichier produit plus vite ou plus lentement selon l'effet désire.
+De nombreux exemples de ces transformations sont disponibles.
+
+/next
+<size=1><b><align="center">Compression simple</size></b></align>
+<size=0.5>
+On cherche maintenant à compresser le fichier pour qu'il prenne moins de place en stockage. On s'interéssera ici seulement à des méthodes destructives, qui font donc perdre de l'information.
+On cherche donc un compromis entre compression et qualité audio, et la question cruciale à se poser est donc : "Quelle information puis-je considérer comme superflue?".
+Un algorithme naïf consiste à dire qu'on ne garde que les N fréquences les plus importantes(au sens de l'intensité sonore) à tout instant, en considérant qu'elles résument correctement à elles seules la musique.
+Cette méthode a l'avantage d'être rapide, et de conserver une qualité auditive plutôt satisfaisante pour des taux de compression assez bas. En revanche, elle échoue à être satisfaisant pour des taux de compression plus élevés.
+
+/next
+<size=1><b><align="center">Compression avancée</size></b></align>
+<size=0.5>
+On propose deux méthodes de compression, qui pourront être concaténées pour n'en former qu'une, chacune ayant un objectif différent.
+La première consiste à enlever les fréquences les moins perceptibles par l'oreille humaine. Grâce à un package matlab("AmtToolbox"), on a accès au seuil d'audibilité humaine en fonction des fréquences.
+L'algorithme qui en découle est donc très simple : on retire toutes les fréquences qui tombent sous la courbe. On fera attention à utiliser un facteur multiplicatif pour contrôler le résultat. Ce facteur sera appelé "facteur de qualité".
+/next
+La deuxième méthode reprend l'idée de l'algorithme naïf, mais de manière plus poussée. Plutôt que de garder les fréquences les plus fortes, on va enlever les fréquences les plus faibles.
+De plus, par rapport aux capacités de perception de l'oreille humaine, on fera cette comparaison localement.
+En effet, une fréquence très faible jouée très proche d'une fréquence très forte se fera peu entendre si les fréquences sont proches. Si les fréquences sont en revanche éloignées, on considère que l'oreille arrivera à distinguer les deux.
+En pratique, il s'agit donc de faire glisser une fenêtre(que l'on prendre à coefficients gaussiens) le temps de toutes les fréquences, de regarder si il existe une autre fréquence "plus grande" dans son voisinage, et de l'éliminer si c'est le cas.
+On traduira "plus grande" par une valeur minimale que l'on appelera "l'écart".
+
+/next
+Il est important de remarquer la spécifité de la première méthode au vu de ses variations. En effet on aperçoit une plage de valeurs critique autour de laquelle le taux de compression varie énormément.
+On peut en déduire une valeur "idéale" au delà de laquelle l'amélioration sera minime.
+Les variations de la deuxième méthode sont plus banales, se rapprochant d'une exponentielle, mais on appréciera quand même ses variations par rapport à la valeur d'écart correllées à celles du facteur de qualité.
+
+/next
+Cette méthode se révèle plus lente à calculer, et pas beaucoup plus (voire parfois moins sur certains extraits) satisfaisante pour des taux de compression bas.
+En revanche, la qualité sonore diminue lentement avec l'amélioration du taux de compression, elle bénéficie donc d'une qualité sonore nettement plus élevée pour des taux de compression élevés.
+A noter également que contrairement au premier algorithme, le taux de compression sera variable d'une musique à l'autre, étant donné que l'algorithme cible des données "inutiles" plutôt que de conserver un montant fixe de données importantes.
+Ainsi sur les exemples fournis, on retrouvera pour les mêmes paramètres des taux de compression variant de 5 pour counterattack(car musique très qualitative et donc rien d'inutile), 30 pour Overworld et 90 et quelques pour l'extrait de Macron(beaucoup de chose inutiles dans cet extrait donc...)

@@ -1,0 +1,42 @@
+SOMMAIRE
+
+-Introduction
+-Champ de force externe 
+-Contours actifs
+-Extensions
+
+INTRODUCTION
+
+Dans cette salle, nous implémentons un système de segmentation par contours actifs. 
+Entre autre, il est demandé à un superviseur de détourer très grossièrement une forme sur image, et nous allons itérer sur ce contour pour l'améliorer.
+Nous travaillons ici encore avec des méthodes variationnelles. Pour forcer le contour à se resserer autour de l'image, nous pénalisons la longueur de celui-ci.
+Pour que le contour ait également un sens et épouse correctement la forme de l'objet, on pénalise également sa courbure. Ces deux contraintes forment l'énergie interne.
+Enfin, on pénalise les faibles gradients de niveaux de gris pour placer le contour actif sur les contours réels de l'image. Cette dernière contrainte forme l'énergie externe.
+Deux exemples d'applications sont disponibles sur les murs.
+
+CHAMP DE FORCE EXTERNE
+
+Avant d'appliquer ces contours, nous avons donc besoin de calculer en tout point le champ externe qui pénalisera notre contour actif.
+On propose trois méthodes d'initialisation de ce champ :
+La première consiste à tout simplement calculer en tout point le gradient de l'image. Cette méthode a l'avantage d'être rapide et simple, et elle fonctionne correment lorsque le constraste d'une image est suffisant.
+En revanche, comme visible sur les pommes, si le constraste n'est pas terrible, le contour actif a vite tendance à rester statique car les gradients sur les contours ne sont pas suffisamment élevés.
+Pour pallier à ça, on propose une deuxième méthode qui vise à flouter l'image par une convolution gaussienne, ce qui va avoir pour effet d'homogénéïser les gradients et de marquer les contours.
+Enfin la dernière méthode de création du champ externe est un modèle dit de diffusion vers les contours. 
+Au lieu d'être calculé directement, il se résout cette fois par méthodes variationnelles, et est donc calculé itérativement à partir du champ de gradient simple.
+Les illustrations de ces trois champs externes sont disponibles.
+
+CONTOURS ACTIFS
+
+Une fois les champs externes calculés, il ne reste plus qu'à appliquer un détourage grossier et à laisser faire l'algorithme itératif associé au problème variationnel exposé précédemment.
+Un exemple d'utilisation est disponible pour chaque type de champ externe.
+
+EXTENSIONS
+
+Lors du travail sur le photomontage, il était venu l'idée de détourer la randonneuse automatiquement pour minimiser le domaine à remplacer.
+Seulement, les résultats des trois différents champs externes étaient êxtremement décevants. En cause, la texture très chargée et le constraste pas forcément très bon.
+Une première idée qui est venu est alors de mélanger les deux méthodes, en créant un champ flou de diffusion. Simplement, l'image est floutée puis le champ d'énergie extérieure par diffusion est calculé par dessus.
+La segmentation qui en résulte est déjà quelque peu plus correcte mais loin d'être satisfaisante.
+L'idée suivante est de regarder l'image canal par canal et de pondérer chaque canal. Dans un premier temps, on étudie chaque canal et on regarde lequel présente le meilleur contraste
+Ensuite, on reprend donc le champ flou par diffusion et on lui applique les transformations suivantes : On floute chaque canal indépendamment avec des paramètres différents. On cherchera à plus flouter les canaux qui présentent un moins bon constraste.
+On calcule le champ d'énergie externe par diffusion sur chaque canal, puis on constitue le champ d'énergie externe en sommant chaque canal pondéré par un coefficient. On fera prévaloir les canaux les plus avantageux.
+On peut ensuite appliquer après quelques petits réglages de paramètres la segmentation, et on trouve cette fois des résultats largement, satisfaisants, considérant qu'il vaut mieux segmenter un peu trop large qu'un peu trop étroit.

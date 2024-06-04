@@ -1,0 +1,57 @@
+<size=2><b><align="center">Sommaire</size></b></align>
+<size=1>
+-Introduction
+-Modèle naïf
+-Algorithme génératif
+-Choix de la forme
+-Optimisation
+
+
+/next<size=1><b><align="center">Introduction</size></b></align>
+<size=0.5>
+Dans cette salle, nous essayons de compter et de localiser les flamants roses présents sur cette image de faible résolution. 
+Plutôt que de passer par des méthodes variationnelles directes, nous utilisons des méthodes statistiques itératives.
+En présupposant la forme d'un flamant rose, nous allons essayer de maximiser l'énergie d'un certain nombre de formes sur l'image.
+L'énergie d'une forme correspond à l'intensité en niveau de gris des pixels présents à l'intérieur.
+Sur les deux autres murs de la salle se trouvent les exemples des algorithmes complet et optimisés pour les deux formes retenues.
+
+
+/next<size=1><b><align="center">Modèle naïf</size></b></align>
+<size=0.5>
+Un premier modèle simpliste consiste à générer un certain nombre de formes à partir d'une estimation globale du nombre, et à les déplacer jusqu'à ce que l'énergie soit maximale.
+Cette première idée apporte déjà une première contrainte à respecter : les formes ne doivent pas trop s'intersecter, étant la modélisation du corps physique d'un flamant rose.
+Cette contrainte apporte une première barrière algorithmique car le temps de calcul sera long pour un grand nombre d'entités. On proposera plusieurs méthodes d'optimisation après.
+Cet algorithme est satisfaisant à condition d'avoir estimé au préalable le nombre de flamants roses. On cherche donc une méthode qui réaliserait cette estimation en même temps.
+
+
+/next<size=1><b><align="center">Algorithme génératif</size></b></align>
+<size=0.5>
+L'idée est la suivante : A chaque étape, on génère un nouveau nombre de formes aléatoires selon une loi discrète(loi de Poisson par exemple). Ensuite, on ne garde que les "meilleures" au sens de l'énergie :
+On va pénaliser les niveaux de gris faibles ainsi que les intersections avec les autres formes. Les formes problématiques, qui ne sont pas situées sur flamants roses ou qui se superposent avec d'autres seront donc éliminées.
+On considère que l'algorithme converge lorsque le nombre d'entités ne varie plus d'une itération à l'autre. 
+Pour faciliter la convergence, à chaque itération, on diminue le paramètre de la loi de génération pour générer de moins en moins de formes.
+
+
+/next<size=1><b><align="center">Choix de la forme</size></b></align>
+<size=0.5>
+Pour le cas d'application des flamants roses présent, deux formes parraissent plus interéssantes : les cercles et les ellipses.
+L'avantage du cercle est qu'il est facile de calculer son énergie et les intersections avec d'autres. 
+L'avantage des ellipses est qu'elle peut mieux représenter la forme du flamant rose, mais demandera plus de ressources pour le calcul à chaque itération.
+Les deux exemples sont présents sur les murs. On observe qu'en pratique, le modèle elliptique n'améliore pas sensiblement le résultat.
+On préfèrera donc le modèle circulaire plus rapide à calculer.
+
+
+/next<size=1><b><align="center">Optimisation</size></b></align>
+<size=0.5>
+Un autre axe d'amélioration est l'optimisation de l'algorithme. Si on n'y prête pas attention, on a vite fait de rendre le calcul extrêmement long.
+Il est par exemple très important de calculer les énergies de chaque entité une unique fois et pas à chaque itération. 
+On calculera donc les énergies des formes générées qu'on stockera dans un tableau, et on gardera les données correspondantes aux formes persistant d'une itération à l'autre.
+De même on fera attention lors du parcours de chaque forme d'avoir calculé les intersections au préalable pour l'itération courante, et non pas de la recalculer à chaque fois.
+Nous avons ajouté dans l'algorithme un masque binaire de recouvrement (une matrice de taille n*n) qui décrit si deux entités s'intersectent au delà du seuil autorisé.
+
+
+/nextEnfin, une dernière idée d'optimisation de l'algorithme repose sur une conjecture :
+On considère que si une entité reste présente pendant plus d'un certain nombre N d'itérations, elle ne disparaîtra jamais au cours des itérations suivantes.
+On arrête donc dans ce cas de recalculer pour ces entités là, considérant qu'elle restent jusqu'au bout.
+Sur les exemples présentes, ce paramètre N a été fixé à 10 : Une entité qui "survit" donc plus de 10 itérations sera considérée comme permanente.
+
