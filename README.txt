@@ -9,4 +9,8 @@ Cependant, si besoin, l'ensemble des sources audio, vidéos, images, et commenta
 https://github.com/Remoraki/rapport_tav
 
 La forme du rendu est peu conventionnelle, mais je voulais un outil interactif pour la correction, notamment pour l'écoute des fichiers audio.
+De plus, c'est quand même beaucoup plus rigolo à faire et (j'espère) à corriger.
 
+
+Gabriel Gournay 
+M1
